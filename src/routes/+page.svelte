@@ -3,11 +3,13 @@
 	import { cubicInOut } from 'svelte/easing';
 	import { fly, scale, fade } from 'svelte/transition';
 	import { spring } from 'svelte/motion';
+	import ArrowNoSwipe from '../components/ArrowNoSwipe.svelte';
+	import ArrowSwipe from '../components/ArrowSwipe.svelte';
 
 	let currentSection = 'hero';
 	let currentIndex = 0;
 	let isScrolling = false;
-	let currentScrollAnimation = null;
+	let animationRunning = false;
 	let mousePos = spring({ x: 0, y: 0 }, {
 		stiffness: 0.1,
 		damping: 0.4
@@ -106,15 +108,32 @@
 			this.x = x;
 			this.y = y;
 			this.size = Math.random() * 1.5 + 0.5;
-			this.speedX = Math.random() * 2 - 1;
-			this.speedY = Math.random() * 2 - 1;
+			this.baseSpeedX = Math.random() * 2 - 1;
+			this.baseSpeedY = Math.random() * 2 - 1;
+			this.speedX = this.baseSpeedX;
+			this.speedY = this.baseSpeedY;
 		}
 
 		update() {
 			this.x += this.speedX;
 			this.y += this.speedY;
-			if (this.x < 0 || this.x > windowWidth) this.speedX *= -1;
-			if (this.y < 0 || this.y > window.innerHeight) this.speedY *= -1;
+
+			if (this.x < 0) {
+				this.x = 0;
+				this.speedX = Math.abs(this.speedX);
+			}
+			if (this.x > windowWidth) {
+				this.x = windowWidth;
+				this.speedX = -Math.abs(this.speedX);
+			}
+			if (this.y < 0) {
+				this.y = 0;
+				this.speedY = Math.abs(this.speedY);
+			}
+			if (this.y > window.innerHeight) {
+				this.y = window.innerHeight;
+				this.speedY = -Math.abs(this.speedY);
+			}
 		}
 
 		draw() {
@@ -123,16 +142,27 @@
 			ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
 			ctx.fill();
 		}
+
+		resize(oldWidth, oldHeight, newWidth, newHeight) {
+			this.x = (this.x / oldWidth) * newWidth;
+			this.y = (this.y / oldHeight) * newHeight;
+		}
 	}
 
 	function initNeuralNetwork() {
 		particles = Array.from({ length: 50 }, () =>
-			new Particle(Math.random() * windowWidth, Math.random() * window.innerHeight)
+			new Particle(
+				Math.random() * windowWidth,
+				Math.random() * window.innerHeight
+			)
 		);
 	}
 
 	function animate() {
+		if (!animationRunning) return;
+
 		ctx.clearRect(0, 0, windowWidth, window.innerHeight);
+
 		particles.forEach(particle => {
 			particle.update();
 			particle.draw();
@@ -167,7 +197,6 @@
 	}
 
 	function handleScroll(event) {
-		// If currently scrolling, prevent new scroll events
 		if (isScrolling) {
 			event.preventDefault();
 			return;
@@ -237,19 +266,42 @@
 		if (canvas) {
 			ctx = canvas.getContext('2d');
 
-			canvas.width = window.innerWidth;
-			canvas.height = window.innerHeight;
+			let oldWidth = window.innerWidth;
+			let oldHeight = window.innerHeight;
 
 			const resizeCanvas = () => {
-				canvas.width = window.innerWidth;
-				canvas.height = window.innerHeight;
-				initNeuralNetwork();
+				const newWidth = window.innerWidth;
+				const newHeight = window.innerHeight;
+
+				animationRunning = false;
+				if (frame) {
+					cancelAnimationFrame(frame);
+				}
+
+				canvas.width = newWidth;
+				canvas.height = newHeight;
+
+				if (particles.length > 0) {
+					particles.forEach(particle => {
+						particle.resize(oldWidth, oldHeight, newWidth, newHeight);
+					});
+				} else {
+					initNeuralNetwork();
+				}
+
+				oldWidth = newWidth;
+				oldHeight = newHeight;
+
+				animationRunning = true;
 				animate();
 			};
 
 			window.addEventListener('resize', resizeCanvas);
 
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
 			initNeuralNetwork();
+			animationRunning = true;
 			animate();
 		}
 
@@ -358,7 +410,7 @@
 		>
 			<div
 				class="flex flex-col items-center justify-center h-full space-y-8"
-				transition:scale={{ duration: 300, start: 0.95 }}
+				transition:scale={{ duration: 300, start: 0.8 }}
 			>
 				{#each sections as section}
 					<a
@@ -389,11 +441,14 @@
 		{/each}
 	</nav>
 
-	<section id="hero" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-y-auto">
+	<section id="hero" class="h-screen flex flex-col items-center justify-center bg-[#0a0a0a] relative overflow-y-auto">
 		<div class="absolute inset-0 moving-gradient"></div>
 
 		{#if currentSection === 'hero'}
-			<div class="text-center z-10 px-4" transition:smoothScale={{duration: 1000}}>
+			{#if windowWidth < 768}
+				<ArrowSwipe />
+			{/if}
+			<div class="flex flex-col justify-center text-center z-10 px-4" transition:smoothScale={{duration: 1000}}>
 				<div class="mb-8 relative inline-block perspective-1000" style="transform: perspective(1000px) rotateY({$mousePos.x / 500}deg) rotateX({-$mousePos.y / 50}deg)">
 					<h1 class="text-5xl md:text-8xl font-bold text-neutral-50 mb-6 tracking-tight">
 						Design. Create. <span class="gradient-text">Innovate.</span>
@@ -422,36 +477,17 @@
 				</div>
 			</div>
 		{/if}
-		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce z-10">
-			<svg
-				class="w-6 h-6 mx-auto"
-				viewBox="0 0 24 24"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					d="M12 4L12 20M12 20L18 14M12 20L6 14"
-					stroke="url(#scrollArrowGradient)"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				/>
-				<defs>
-					<linearGradient id="scrollArrowGradient" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
-						<stop offset="0%" stop-color="#10B981"/>
-						<stop offset="100%" stop-color="#14B8A6"/>
-					</linearGradient>
-				</defs>
-			</svg>
-		</div>
+		{#if windowWidth >= 768}
+			<ArrowNoSwipe />
+		{/if}
 	</section>
 
 	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative">
 		{#if currentSection === 'about'}
-			<div class="w-full h-full flex items-start overflow-y-auto pt-4 md:pt-16 pb-16 px-4 md:px-8" transition:fade={{duration: 800}}>
+			<div class="w-full h-full flex items-start overflow-y-auto pt-4 md:pt-16 pb-16 px-4 md:px-8"  in:fade={{duration: 800}} out:fade={{duration:400}}>
 				<div class="max-w-7xl mx-auto w-full">
 					<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-						<div class="glass p-6 md:p-8 rounded-2xl hover-card relative h-fit overflow-hidden">
+						<div class="glass p-6 md:p-8 rounded-2xl relative h-fit overflow-hidden">
 							<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-transparent"></div>
 							<h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-50 mb-6">
 								<span class="gradient-text">Crafting</span> Digital Excellence
