@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { cubicInOut } from 'svelte/easing';
-	import { blur, fly, scale, fade } from 'svelte/transition';
+	import { fly, scale, fade } from 'svelte/transition';
 	import { spring } from 'svelte/motion';
 
 	let currentSection = 'hero';
@@ -238,18 +238,55 @@
 	}
 
 	function handleScroll(event) {
-		event.preventDefault();
 		if (isScrolling) return;
-		const direction = event.deltaY > 0 ? 1 : -1;
-		const newIndex = Math.min(Math.max(currentIndex + direction, 0), sections.length - 1);
-		if (newIndex !== currentIndex) {
-			isScrolling = true;
-			currentIndex = newIndex;
-			currentSection = sections[currentIndex];
-			scrollToSection(sections[currentIndex]);
-			setTimeout(() => {
-				isScrolling = false;
-			}, 1000);
+
+		let target = event.target;
+		let isScrollableContainer = false;
+
+		while (target && target !== document.documentElement) {
+			const style = window.getComputedStyle(target);
+			const canScrollY = style.overflowY === 'auto' || style.overflowY === 'scroll';
+
+			if (canScrollY) {
+				const canScrollUp = target.scrollTop > 0;
+				const canScrollDown = target.scrollTop < target.scrollHeight - target.clientHeight;
+
+				if ((event.deltaY < 0 && canScrollUp) || (event.deltaY > 0 && canScrollDown)) {
+					isScrollableContainer = true;
+					break;
+				}
+			}
+
+			target = target.parentElement;
+		}
+
+		if (isScrollableContainer) return;
+
+		const currentElement = document.getElementById(currentSection);
+		if (!currentElement) return;
+
+		const scrollTop = currentElement.scrollTop;
+		const scrollHeight = currentElement.scrollHeight;
+		const clientHeight = currentElement.clientHeight;
+		const hasVerticalScroll = scrollHeight > clientHeight;
+
+		if (!hasVerticalScroll ||
+			(event.deltaY > 0 && Math.abs(scrollHeight - clientHeight - scrollTop) <= 1) ||
+			(event.deltaY < 0 && scrollTop <= 0)) {
+
+			const direction = event.deltaY > 0 ? 1 : -1;
+			const newIndex = Math.min(Math.max(currentIndex + direction, 0), sections.length - 1);
+
+			if (newIndex !== currentIndex) {
+				event.preventDefault();
+				isScrolling = true;
+				currentIndex = newIndex;
+				currentSection = sections[currentIndex];
+				scrollToSection(sections[currentIndex]);
+				setTimeout(() => {
+					isScrolling = false;
+				}, 1000);
+			}
 		}
 	}
 
@@ -338,9 +375,9 @@
     }
 
     @keyframes gradient {
-        0% { background-position: 0% 50%; }
+        0% { background-position: 0 50%; }
         50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+        100% { background-position: 0 50%; }
     }
 
     .hover-card {
@@ -357,10 +394,6 @@
 
     .magnetic-button {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    body {
-        overflow: hidden;
     }
 </style>
 
@@ -415,7 +448,7 @@
 		{/each}
 	</nav>
 
-	<section id="hero" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden">
+	<section id="hero" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-y-auto">
 		<canvas id="hero-particles" class="absolute inset-0 pointer-events-none" style="z-index: 1;"></canvas>
 		<div class="absolute inset-0 moving-gradient"></div>
 
@@ -448,12 +481,34 @@
 					</button>
 				</div>
 			</div>
+			<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce z-10">
+				<svg
+					class="w-6 h-6 mx-auto"
+					viewBox="0 0 24 24"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M12 4L12 20M12 20L18 14M12 20L6 14"
+						stroke="url(#scrollArrowGradient)"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+					<defs>
+						<linearGradient id="scrollArrowGradient" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+							<stop offset="0%" stop-color="#10B981"/>
+							<stop offset="100%" stop-color="#14B8A6"/>
+						</linearGradient>
+					</defs>
+				</svg>
+			</div>
 		{/if}
 	</section>
 
 	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative">
 		{#if currentSection === 'about'}
-			<div class="w-full h-full flex items-start overflow-y-auto pt-4 md:pt-28 pb-16 px-4 md:px-8" transition:fade={{duration: 800}}>
+			<div class="w-full h-full flex items-start overflow-y-auto pt-4 md:pt-16 pb-16 px-4 md:px-8" transition:fade={{duration: 800}}>
 				<div class="max-w-7xl mx-auto w-full">
 					<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
 						<div class="glass p-6 md:p-8 rounded-2xl hover-card relative h-fit overflow-hidden">
@@ -487,9 +542,7 @@
 							</div>
 						</div>
 
-						<!-- Right Column -->
 						<div class="space-y-6">
-							<!-- Experience Card -->
 							<div class="glass p-6 md:p-8 rounded-2xl hover-card relative overflow-hidden group">
 								<div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
 								<h3 class="text-2xl font-bold text-neutral-50 mb-4">Key Achievements</h3>
@@ -517,7 +570,6 @@
 								</div>
 							</div>
 
-							<!-- Recognition Card -->
 							<div class="glass p-6 md:p-8 rounded-2xl hover-card relative overflow-hidden group">
 								<div class="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
 								<h3 class="text-2xl font-bold text-neutral-50 mb-4">Recognition</h3>
@@ -542,6 +594,28 @@
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce">
+				<svg
+					class="w-6 h-6 mx-auto"
+					viewBox="0 0 24 24"
+					fill="none"
+					xmlns="http://www.w3.org/2000/svg"
+				>
+					<path
+						d="M12 4L12 20M12 20L18 14M12 20L6 14"
+						stroke="url(#scrollArrowGradient)"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+					<defs>
+						<linearGradient id="scrollArrowGradient" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+							<stop offset="0%" stop-color="#10B981"/>
+							<stop offset="100%" stop-color="#14B8A6"/>
+						</linearGradient>
+					</defs>
+				</svg>
 			</div>
 		{/if}
 	</section>
