@@ -7,6 +7,7 @@
 	let currentSection = 'hero';
 	let currentIndex = 0;
 	let isScrolling = false;
+	let currentScrollAnimation = null;
 	let mousePos = spring({ x: 0, y: 0 }, {
 		stiffness: 0.1,
 		damping: 0.4
@@ -16,10 +17,6 @@
 	let canvas;
 	let ctx;
 	let particles = [];
-	let cursorTrail = [];
-	let heroCanvas;
-	let heroCtx;
-	let glowParticles = [];
 	let frame = 0;
 
 	const sections = ['hero', 'about', 'skills', 'projects', 'contact'];
@@ -128,48 +125,10 @@
 		}
 	}
 
-	class GlowParticle {
-		constructor() {
-			this.reset();
-		}
-
-		reset() {
-			this.x = Math.random() * windowWidth;
-			this.y = Math.random() * window.innerHeight;
-			this.size = Math.random() * 2 + 0.5;
-			this.speedX = Math.random() * 2 - 1;
-			this.speedY = Math.random() * 2 - 1;
-			this.alpha = 0;
-			this.targetAlpha = Math.random() * 0.3 + 0.1;
-			this.fadeSpeed = 0.02;
-		}
-
-		update() {
-			this.x += this.speedX;
-			this.y += this.speedY;
-			this.alpha += (this.targetAlpha - this.alpha) * this.fadeSpeed;
-			if (this.x < 0 || this.x > windowWidth || this.y < 0 || this.y > window.innerHeight) {
-				this.reset();
-			}
-		}
-
-		draw() {
-			heroCtx.fillStyle = '#ffffff';
-			heroCtx.globalAlpha = this.alpha;
-			heroCtx.beginPath();
-			heroCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-			heroCtx.fill();
-		}
-	}
-
 	function initNeuralNetwork() {
 		particles = Array.from({ length: 50 }, () =>
 			new Particle(Math.random() * windowWidth, Math.random() * window.innerHeight)
 		);
-	}
-
-	function initGlowParticles() {
-		glowParticles = Array.from({ length: 30 }, () => new GlowParticle());
 	}
 
 	function animate() {
@@ -194,37 +153,7 @@
 			});
 		});
 
-		if (currentSection === 'hero' && heroCtx) {
-			heroCtx.clearRect(0, 0, windowWidth, window.innerHeight);
-			glowParticles.forEach(particle => {
-				particle.update();
-				particle.draw();
-			});
-		}
-
-		if (cursorTrail.length > 0) {
-			ctx.beginPath();
-			ctx.moveTo(cursorTrail[0].x, cursorTrail[0].y);
-
-			for (let i = 1; i < cursorTrail.length - 1; i++) {
-				const xc = (cursorTrail[i].x + cursorTrail[i + 1].x) / 2;
-				const yc = (cursorTrail[i].y + cursorTrail[i + 1].y) / 2;
-				ctx.quadraticCurveTo(cursorTrail[i].x, cursorTrail[i].y, xc, yc);
-			}
-
-			ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-			ctx.lineWidth = 2;
-			ctx.lineCap = 'round';
-			ctx.stroke();
-		}
-
 		frame = requestAnimationFrame(animate);
-	}
-
-	function handleMouseMove(event) {
-		mousePos.set({ x: event.clientX, y: event.clientY });
-		cursorTrail.push({ x: event.clientX, y: event.clientY });
-		if (cursorTrail.length > 20) cursorTrail.shift();
 	}
 
 	function scrollToSection(sectionId) {
@@ -238,7 +167,11 @@
 	}
 
 	function handleScroll(event) {
-		if (isScrolling) return;
+		// If currently scrolling, prevent new scroll events
+		if (isScrolling) {
+			event.preventDefault();
+			return;
+		}
 
 		let target = event.target;
 		let isScrollableContainer = false;
@@ -274,18 +207,24 @@
 			(event.deltaY > 0 && Math.abs(scrollHeight - clientHeight - scrollTop) <= 1) ||
 			(event.deltaY < 0 && scrollTop <= 0)) {
 
+			event.preventDefault();
+
 			const direction = event.deltaY > 0 ? 1 : -1;
 			const newIndex = Math.min(Math.max(currentIndex + direction, 0), sections.length - 1);
 
 			if (newIndex !== currentIndex) {
-				event.preventDefault();
 				isScrolling = true;
 				currentIndex = newIndex;
 				currentSection = sections[currentIndex];
-				scrollToSection(sections[currentIndex]);
-				setTimeout(() => {
-					isScrolling = false;
-				}, 1000);
+
+				const targetElement = document.getElementById(sections[currentIndex]);
+				if (targetElement) {
+					targetElement.scrollIntoView({ behavior: 'smooth' });
+
+					setTimeout(() => {
+						isScrolling = false;
+					}, 800);
+				}
 			}
 		}
 	}
@@ -293,21 +232,24 @@
 	onMount(() => {
 		document.documentElement.style.scrollBehavior = 'smooth';
 		window.addEventListener('wheel', handleScroll, { passive: false });
-		window.addEventListener('mousemove', handleMouseMove);
 
 		canvas = document.getElementById('neural-network');
-		heroCanvas = document.getElementById('hero-particles');
-		if (canvas && heroCanvas) {
+		if (canvas) {
 			ctx = canvas.getContext('2d');
-			heroCtx = heroCanvas.getContext('2d');
 
-			canvas.width = windowWidth;
+			canvas.width = window.innerWidth;
 			canvas.height = window.innerHeight;
-			heroCanvas.width = windowWidth;
-			heroCanvas.height = window.innerHeight;
+
+			const resizeCanvas = () => {
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				initNeuralNetwork();
+				animate();
+			};
+
+			window.addEventListener('resize', resizeCanvas);
 
 			initNeuralNetwork();
-			initGlowParticles();
 			animate();
 		}
 
@@ -330,7 +272,6 @@
 
 		return () => {
 			window.removeEventListener('wheel', handleScroll);
-			window.removeEventListener('mousemove', handleMouseMove);
 			cancelAnimationFrame(frame);
 		};
 	});
@@ -449,7 +390,6 @@
 	</nav>
 
 	<section id="hero" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-y-auto">
-		<canvas id="hero-particles" class="absolute inset-0 pointer-events-none" style="z-index: 1;"></canvas>
 		<div class="absolute inset-0 moving-gradient"></div>
 
 		{#if currentSection === 'hero'}
@@ -481,29 +421,29 @@
 					</button>
 				</div>
 			</div>
-			<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce z-10">
-				<svg
-					class="w-6 h-6 mx-auto"
-					viewBox="0 0 24 24"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M12 4L12 20M12 20L18 14M12 20L6 14"
-						stroke="url(#scrollArrowGradient)"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-					<defs>
-						<linearGradient id="scrollArrowGradient" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
-							<stop offset="0%" stop-color="#10B981"/>
-							<stop offset="100%" stop-color="#14B8A6"/>
-						</linearGradient>
-					</defs>
-				</svg>
-			</div>
 		{/if}
+		<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce z-10">
+			<svg
+				class="w-6 h-6 mx-auto"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					d="M12 4L12 20M12 20L18 14M12 20L6 14"
+					stroke="url(#scrollArrowGradient)"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+				<defs>
+					<linearGradient id="scrollArrowGradient" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+						<stop offset="0%" stop-color="#10B981"/>
+						<stop offset="100%" stop-color="#14B8A6"/>
+					</linearGradient>
+				</defs>
+			</svg>
+		</div>
 	</section>
 
 	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative">
