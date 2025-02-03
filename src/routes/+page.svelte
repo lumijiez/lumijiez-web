@@ -6,7 +6,7 @@
 	import ArrowNoSwipe from '../components/ArrowNoSwipe.svelte';
 	import ArrowSwipe from '../components/ArrowSwipe.svelte';
 
-	let currentSection = 'hero';
+	let currentSection = '';
 	let currentIndex = 0;
 	let isScrolling = false;
 	let animationRunning = false;
@@ -373,14 +373,6 @@
         100% { background-position: 0 50%; }
     }
 
-    .hover-card {
-        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .hover-card:hover {
-        transform: translateY(-10px) scale(1.02);
-    }
-
     .skill-bar {
         transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -395,12 +387,12 @@
 <main class="w-full relative bg-[#0a0a0a]">
 	<button
 		aria-label="MenuButtonMobile"
-		class="fixed top-4 right-4 z-[60] p-2 rounded-full md:hidden hover:scale-110 transition-transform bg-neutral-900/50 backdrop-blur-sm"
+		class="fixed top-4 right-4 z-[60] p-2 md:hidden transition-transform"
 		on:click={() => isMobileMenuOpen = !isMobileMenuOpen}
 	>
-		<div class="w-6 h-0.5 bg-neutral-200 mb-1.5 transition-all" style={isMobileMenuOpen ? 'transform: rotate(45deg) translate(5px, 5px)' : ''}></div>
-		<div class="w-6 h-0.5 bg-neutral-200 mb-1.5" style={isMobileMenuOpen ? 'opacity: 0' : ''}></div>
-		<div class="w-6 h-0.5 bg-neutral-200" style={isMobileMenuOpen ? 'transform: rotate(-45deg) translate(5px, -5px)' : ''}></div>
+		<div class="w-6 h-0.5 bg-neutral-200 mb-1.5 transition-all" style={isMobileMenuOpen ? 'transform: rotate(45deg) translate(6px, 6px)' : ''}></div>
+		<div class="w-6 h-0.5 bg-neutral-200 mb-1.5 transition-all" style={isMobileMenuOpen ? 'opacity: 0' : ''}></div>
+		<div class="w-6 h-0.5 bg-neutral-200 transition-all" style={isMobileMenuOpen ? 'transform: rotate(-45deg) translate(5px, -5px)' : ''}></div>
 	</button>
 
 	{#if isMobileMenuOpen}
@@ -448,7 +440,7 @@
 			{#if windowWidth < 768}
 				<ArrowSwipe />
 			{/if}
-			<div class="flex flex-col justify-center text-center z-10 px-4" transition:smoothScale={{duration: 1000}}>
+			<div class="flex flex-col justify-center text-center z-10 px-4" in:smoothScale={{duration: 1000}} out:smoothScale={{duration: 100}}>
 				<div class="mb-8 relative inline-block perspective-1000" style="transform: perspective(1000px) rotateY({$mousePos.x / 500}deg) rotateX({-$mousePos.y / 50}deg)">
 					<h1 class="text-5xl md:text-8xl font-bold text-neutral-50 mb-6 tracking-tight">
 						Design. Create. <span class="gradient-text">Innovate.</span>
@@ -482,87 +474,100 @@
 		{/if}
 	</section>
 
-	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative">
+	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative overflow-y-auto">
 		{#if currentSection === 'about'}
-			<div class="w-full h-full flex items-start overflow-y-auto pt-4 md:pt-16 pb-16 px-4 md:px-8"  in:fade={{duration: 800}} out:fade={{duration:400}}>
+			<div class="w-full h-full flex items-start pt-4 md:pt-16 pb-16 px-4 md:px-8"
+					 in:fade={{duration: 800}}
+					 out:fade={{duration:100}}>
 				<div class="max-w-7xl mx-auto w-full">
-					<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-						<div class="glass p-6 md:p-8 rounded-2xl relative h-fit overflow-hidden">
+					<div class="text-center mb-4" in:fly={{ y: 30, duration: 1000 }}>
+						<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50">
+							About <span class="gradient-text">Me</span>
+						</h2>
+					</div>
+
+					<div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
+						<div class="glass p-6 md:p-8 rounded-2xl relative h-fit overflow-hidden transform transition-transform lg:w-1/2">
 							<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-transparent"></div>
 							<h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-50 mb-6">
 								<span class="gradient-text">Crafting</span> Digital Excellence
 							</h2>
 							<div class="space-y-4 text-neutral-300">
 								<p class="text-base md:text-lg leading-relaxed"
-									 in:fly={{ delay: 200, y: 20, duration: 800 }}>
+									 in:fade={{ delay: 200, y: 20, duration: 800 }}>
 									With over 5 years of experience in full-stack development, I transform complex challenges into elegant solutions that delight users and drive business growth.
 								</p>
 								<p class="text-base md:text-lg leading-relaxed"
-									 in:fly={{ delay: 400, y: 20, duration: 800 }}>
+									 in:fade={{ delay: 400, y: 20, duration: 800 }}>
 									My approach combines technical expertise with creative innovation, ensuring every project not only meets but exceeds expectations.
 								</p>
 							</div>
 
-							<div class="mt-6">
+							<div class="mt-8">
 								<h3 class="text-lg font-semibold text-neutral-200 mb-3">Tech Stack</h3>
 								<div class="flex flex-wrap gap-2">
-									{#each ['React', 'Node.js', 'TypeScript', 'Python', 'AWS', 'Docker'] as tech, i}
-                                    <span
-																			class="px-3 py-1.5 glass rounded-full text-sm text-neutral-200 border border-neutral-700/50 hover:border-emerald-500/50 transition-all cursor-default transform hover:scale-110"
-																			in:fly={{ delay: 500 + (i * 100), x: 20, duration: 600 }}
-																		>
-                                        {tech}
-                                    </span>
+									{#each ['React', 'Node.js', 'TypeScript', 'Python', 'AWS', 'Docker', 'PostgreSQL', 'Redis'] as tech, i}
+										<div
+											class="px-3 py-1.5 glass rounded-full text-sm text-neutral-200 border border-neutral-700/50 hover:border-emerald-500/50 transition-all cursor-default transform hover:scale-110 hover:text-emerald-400"
+											in:fly|global={{ delay: 300 + (i * 100), x: 20, duration: 600 }}
+										>
+											{tech}
+										</div>
 									{/each}
 								</div>
 							</div>
 						</div>
 
-						<div class="space-y-6">
-							<div class="glass p-6 md:p-8 rounded-2xl hover-card relative overflow-hidden group">
-								<div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-								<h3 class="text-2xl font-bold text-neutral-50 mb-4">Key Achievements</h3>
-								<div class="space-y-4">
+						<div class="flex flex-col gap-6 lg:w-1/2">
+							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform">
+								<div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 transition-opacity duration-500"></div>
+								<h3 class="text-2xl font-bold text-neutral-50 mb-6 transition-colors">Key Achievements</h3>
+								<div class="flex flex-col gap-6">
 									{#each [
 										{ title: 'Project Success Rate', value: '98%', desc: 'Consistent delivery excellence' },
 										{ title: 'User Satisfaction', value: '4.9/5', desc: 'Based on client feedback' },
-										{ title: 'Performance Boost', value: '300%', desc: 'Average speed improvement' }
+										{ title: 'Performance Boost', value: '300%', desc: 'Average speed improvement' },
+										{ title: 'Code Quality', value: 'A+', desc: 'SonarQube Rating' }
 									] as stat, i}
 										<div
 											class="flex items-center gap-4 group/stat"
 											in:fly={{ delay: 300 + (i * 200), x: 30, duration: 800 }}
 										>
-											<div class="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
-                                            <span class="text-xl md:text-2xl font-bold text-emerald-400 group-hover/stat:scale-110 transition-transform">
-                                                {stat.value}
-                                            </span>
+											<div class="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center group-hover:from-emerald-500/30 group-hover:to-teal-500/30 transition-all">
+                      <span class="text-xl md:text-2xl font-bold text-emerald-400 transition-transform duration-500">
+                        {stat.value}
+                      </span>
 											</div>
 											<div>
-												<h4 class="text-base md:text-lg font-medium text-neutral-200">{stat.title}</h4>
-												<p class="text-xs md:text-sm text-neutral-400">{stat.desc}</p>
+												<h4 class="text-base md:text-lg font-medium text-neutral-200 transition-colors">{stat.title}</h4>
+												<p class="text-sm md:text-base text-neutral-400">{stat.desc}</p>
 											</div>
 										</div>
 									{/each}
 								</div>
 							</div>
 
-							<div class="glass p-6 md:p-8 rounded-2xl hover-card relative overflow-hidden group">
-								<div class="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-								<h3 class="text-2xl font-bold text-neutral-50 mb-4">Recognition</h3>
-								<div class="flex flex-wrap gap-4">
+							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform mb-6">
+								<div class="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-purple-500/10 opacity-100 transition-opacity duration-500"></div>
+								<h3 class="text-2xl font-bold text-neutral-50 mb-6 transition-colors">Recognition</h3>
+								<div class="flex flex-wrap gap-6">
 									{#each [
-										{ icon: '🏆', title: 'Best Web App 2023' },
-										{ icon: '🌟', title: 'Top Developer Award' },
-										{ icon: '📈', title: 'Innovation Excellence' }
+										{ icon: '🏆', title: 'Best Web App 2023', desc: 'Tech Innovation Awards' },
+										{ icon: '🌟', title: 'Top Developer', desc: 'GitHub Elite' },
+										{ icon: '📈', title: 'Innovation Lead', desc: 'Industry Recognition' },
+										{ icon: '🚀', title: 'Performance Guru', desc: 'Web Performance' },
+										{ icon: '🎯', title: 'Best Practice', desc: 'Code Quality' },
+										{ icon: '💡', title: 'Tech Innovator', desc: 'Annual Summit' }
 									] as award, i}
 										<div
-											class="flex items-center gap-3 group/award basis-[calc(50%-0.5rem)] md:basis-auto"
+											class="flex flex-col items-center text-center group/award space-y-2 w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]"
 											in:fly={{ delay: 400 + (i * 200), y: 20, duration: 800 }}
 										>
-                                        <span class="text-xl md:text-2xl transform group-hover/award:scale-125 transition-transform">
-                                            {award.icon}
-                                        </span>
-											<span class="text-sm md:text-base text-neutral-300">{award.title}</span>
+                    <span class="text-3xl transform group-hover/award:scale-125 transition-transform duration-500">
+                      {award.icon}
+                    </span>
+											<span class="text-sm md:text-base font-medium text-neutral-200">{award.title}</span>
+											<span class="text-xs md:text-sm text-neutral-400">{award.desc}</span>
 										</div>
 									{/each}
 								</div>
@@ -571,6 +576,7 @@
 					</div>
 				</div>
 			</div>
+
 			<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce">
 				<svg
 					class="w-6 h-6 mx-auto"
@@ -604,7 +610,7 @@
 				<h2 class="text-4xl md:text-5xl font-bold text-neutral-50 mb-12 text-center">Technical Expertise</h2>
 				<div class="flex flex-wrap gap-8 justify-center">
 					{#each Object.entries(skills) as [category, categorySkills], i}
-						<div class="glass p-8 rounded-2xl hover-card relative overflow-hidden flex-1 min-w-[280px]" transition:fade={{delay: i * 100}}>
+						<div class="glass p-8 rounded-2xl relative overflow-hidden flex-1 min-w-[280px]" transition:fade={{delay: i * 100}}>
 							<h3 class="text-2xl font-bold text-neutral-50 mb-8 relative">{category}</h3>
 							<div class="space-y-6 relative">
 								{#each categorySkills as skill, j}
@@ -633,7 +639,7 @@
 				<h2 class="text-4xl md:text-5xl font-bold text-neutral-50 mb-12 text-center">Featured Projects</h2>
 				<div class="flex flex-wrap gap-8 justify-center">
 					{#each projects as project, i}
-						<div class="glass rounded-2xl overflow-hidden hover-card group flex-1 min-w-[280px]" transition:smoothScale={{delay: i * 100}}>
+						<div class="glass rounded-2xl overflow-hidden group flex-1 min-w-[280px]" transition:smoothScale={{delay: i * 100}}>
 							<div class="relative aspect-video overflow-hidden">
 								<div class="absolute inset-0 bg-gradient-to-br {project.color} transition-opacity"></div>
 								<img src={project.image} alt={project.title} class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
@@ -679,7 +685,7 @@
 							{ title: 'GitHub', value: '@username', icon: '💻' },
 							{ title: 'LinkedIn', value: '@username', icon: '🔗' }
 						] as contact, i}
-							<div class="glass p-6 rounded-xl hover-card group relative overflow-hidden flex-1 min-w-[200px]" transition:scale={{delay: i * 100}}>
+							<div class="glass p-6 rounded-xl group relative overflow-hidden flex-1 min-w-[200px]" transition:scale={{delay: i * 100}}>
 								<div class="flex items-center gap-3">
 									<span class="text-2xl transform group-hover:scale-125 transition-transform">{contact.icon}</span>
 									<div>
