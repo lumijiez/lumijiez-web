@@ -443,11 +443,27 @@
 			<div class="flex flex-col justify-center text-center z-10 px-4" in:smoothScale={{duration: 1000}} out:smoothScale={{duration: 100}}>
 				<div class="mb-8 relative inline-block perspective-1000" style="transform: perspective(1000px) rotateY({$mousePos.x / 500}deg) rotateX({-$mousePos.y / 50}deg)">
 					<h1 class="text-5xl md:text-8xl font-bold text-neutral-50 mb-6 tracking-tight">
-						Design. Create. <span class="gradient-text">Innovate.</span>
+						{#each ['Design.', 'Create.', 'Innovate.'] as word, i}
+							<span
+								in:fly|global={{ y: 50, duration: 800, delay: i * 300 }}
+								out:fade|global={{ duration: 100 }}
+								class="inline-block mr-4 {word === 'Innovate.' ? 'gradient-text' : ''}"
+							>
+									{word}
+							</span>
+						{/each}
 					</h1>
 				</div>
 				<p class="text-xl md:text-2xl text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-					Crafting digital experiences that push the boundaries of what's possible
+					{#each ['Designing', 'and', 'developing', 'things', 'that', 'actually', 'work'] as word, i}
+                    <span
+											in:fade|global={{ duration: 200, delay: i * 100 }}
+											out:fade|global={{ duration: 100 }}
+											class="inline-block mr-2"
+										>
+                        {word}
+                    </span>
+					{/each}
 				</p>
 				<div class="mt-12 flex flex-wrap justify-center gap-4">
 					<button
@@ -476,12 +492,12 @@
 
 	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative overflow-y-auto">
 		{#if currentSection === 'about'}
-			<div class="w-full h-full flex items-start pt-4 md:pt-16 pb-16 px-4 md:px-8"
+			<div class="w-full h-full flex items-start md:pt-6 pb-16 px-4 md:px-8"
 					 in:fade={{duration: 800}}
 					 out:fade={{duration:100}}>
 				<div class="max-w-7xl mx-auto w-full">
 					<div class="text-center mb-4" in:fly={{ y: 30, duration: 1000 }}>
-						<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50">
+						<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50 md:pb-4">
 							About <span class="gradient-text">Me</span>
 						</h2>
 					</div>
