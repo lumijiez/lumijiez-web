@@ -21,5 +21,5 @@
 			</defs>
 		</svg>
 	</div>
-	<span class="text-neutral-400 text-sm font-medium">Swipe</span>
+<!--	<span class="text-neutral-400 text-sm font-medium">Swipe</span>-->
 </div>

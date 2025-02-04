@@ -5,6 +5,9 @@
 	import { spring } from 'svelte/motion';
 	import ArrowNoSwipe from '../components/ArrowNoSwipe.svelte';
 	import ArrowSwipe from '../components/ArrowSwipe.svelte';
+	import 'devicon/devicon.min.css';
+	import * as Carousel from "$lib/shad/ui/carousel";
+	import { Button } from "$lib/shad/ui/button";
 
 	let currentSection = '';
 	let currentIndex = 0;
@@ -51,7 +54,9 @@
 			tech: ['React', 'Three.js', 'GSAP'],
 			color: 'from-emerald-600/90 to-teal-500/90',
 			features: ['Real-time 3D rendering', 'Data-driven animations', 'WebGL shaders'],
-			image: '/api/placeholder/600/400'
+			image: '/api/placeholder/600/400',
+			githubLink: '#',
+			liveLink: '#'
 		},
 		{
 			title: 'Project Beta',
@@ -59,7 +64,9 @@
 			tech: ['Svelte', 'WebGL', 'Firebase'],
 			color: 'from-violet-600/90 to-indigo-500/90',
 			features: ['Real-time editing', 'AI suggestions', 'Version control'],
-			image: '/api/placeholder/600/400'
+			image: '/api/placeholder/600/400',
+			githubLink: '#',
+			liveLink: '#'
 		},
 		{
 			title: 'Project Gamma',
@@ -67,8 +74,20 @@
 			tech: ['Next.js', 'TailwindCSS', 'Prisma'],
 			color: 'from-rose-600/90 to-pink-500/90',
 			features: ['AR preview', 'Instant search', 'Dynamic pricing'],
-			image: '/api/placeholder/600/400'
+			image: '/api/placeholder/600/400',
+			githubLink: '#',
+			liveLink: '#'
 		},
+		{
+			title: 'Project Delta',
+			description: 'Blockchain-powered decentralized marketplace',
+			tech: ['Solidity', 'Web3.js', 'React'],
+			color: 'from-blue-600/90 to-purple-500/90',
+			features: ['Smart contract integration', 'Secure transactions', 'Decentralized'],
+			image: '/api/placeholder/600/400',
+			githubLink: '#',
+			liveLink: '#'
+		}
 	];
 
 	const smoothScale = (node, { delay = 0, duration = 400 }) => {
@@ -459,7 +478,7 @@
                     <span
 											in:fade|global={{ duration: 200, delay: i * 100 }}
 											out:fade|global={{ duration: 100 }}
-											class="inline-block mr-2"
+											class="inline-block mr-1"
 										>
                         {word}
                     </span>
@@ -490,100 +509,85 @@
 		{/if}
 	</section>
 
-	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative overflow-y-auto">
-		{#if currentSection === 'about'}
-			<div class="w-full h-full flex items-start md:pt-6 pb-16 px-4 md:px-8"
-					 in:fade={{duration: 800}}
-					 out:fade={{duration:100}}>
-				<div class="max-w-7xl mx-auto w-full">
-					<div class="text-center mb-4" in:fly={{ y: 30, duration: 1000 }}>
-						<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50 md:pb-4">
-							About <span class="gradient-text">Me</span>
-						</h2>
-					</div>
-
-					<div class="flex flex-col lg:flex-row gap-6 lg:gap-8">
-						<div class="glass p-6 md:p-8 rounded-2xl relative h-fit overflow-hidden transform transition-transform lg:w-1/2">
-							<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-transparent"></div>
-							<h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-50 mb-6">
-								<span class="gradient-text">Crafting</span> Digital Excellence
+	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative">
+		<div class="w-full h-full flex items-start md:pt-6 px-4 md:px-8 overflow-y-scroll">
+			{#if currentSection === 'about'}
+				<div class="w-full pb-16"
+						 in:fade={{duration: 800}}
+						 out:fade={{duration:100}}>
+					<div class="max-w-7xl mx-auto w-full">
+						<div class="text-center mt-4 md:mt-0 lg:mt-4 mb-4" in:fly={{ y: 30, duration: 1000 }}>
+							<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50 md:pb-4">
+								About <span class="gradient-text">Me</span>
 							</h2>
-							<div class="space-y-4 text-neutral-300">
-								<p class="text-base md:text-lg leading-relaxed"
-									 in:fade={{ delay: 200, y: 20, duration: 800 }}>
-									With over 5 years of experience in full-stack development, I transform complex challenges into elegant solutions that delight users and drive business growth.
-								</p>
-								<p class="text-base md:text-lg leading-relaxed"
-									 in:fade={{ delay: 400, y: 20, duration: 800 }}>
-									My approach combines technical expertise with creative innovation, ensuring every project not only meets but exceeds expectations.
-								</p>
-							</div>
-
-							<div class="mt-8">
-								<h3 class="text-lg font-semibold text-neutral-200 mb-3">Tech Stack</h3>
-								<div class="flex flex-wrap gap-2">
-									{#each ['React', 'Node.js', 'TypeScript', 'Python', 'AWS', 'Docker', 'PostgreSQL', 'Redis'] as tech, i}
-										<div
-											class="px-3 py-1.5 glass rounded-full text-sm text-neutral-200 border border-neutral-700/50 hover:border-emerald-500/50 transition-all cursor-default transform hover:scale-110 hover:text-emerald-400"
-											in:fly|global={{ delay: 300 + (i * 100), x: 20, duration: 600 }}
-										>
-											{tech}
-										</div>
-									{/each}
-								</div>
-							</div>
 						</div>
 
-						<div class="flex flex-col gap-6 lg:w-1/2">
-							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform">
-								<div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 transition-opacity duration-500"></div>
-								<h3 class="text-2xl font-bold text-neutral-50 mb-6 transition-colors">Key Achievements</h3>
-								<div class="flex flex-col gap-6">
-									{#each [
-										{ title: 'Project Success Rate', value: '98%', desc: 'Consistent delivery excellence' },
-										{ title: 'User Satisfaction', value: '4.9/5', desc: 'Based on client feedback' },
-										{ title: 'Performance Boost', value: '300%', desc: 'Average speed improvement' },
-										{ title: 'Code Quality', value: 'A+', desc: 'SonarQube Rating' }
-									] as stat, i}
-										<div
-											class="flex items-center gap-4 group/stat"
-											in:fly={{ delay: 300 + (i * 200), x: 30, duration: 800 }}
-										>
-											<div class="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center group-hover:from-emerald-500/30 group-hover:to-teal-500/30 transition-all">
-                      <span class="text-xl md:text-2xl font-bold text-emerald-400 transition-transform duration-500">
-                        {stat.value}
-                      </span>
+						<div class="flex flex-col mb-6 lg:flex-row gap-6 lg:gap-8">
+							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform lg:w-1/2">
+								<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-transparent"></div>
+								<h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-50 mb-6">
+									<span class="gradient-text">Crafting</span> Digital Excellence
+								</h2>
+								<div class="space-y-4 text-neutral-300">
+									<p class="text-base md:text-lg leading-relaxed"
+										 in:fade={{ delay: 200, y: 20, duration: 800 }}>
+										With over 5 years of experience in full-stack development, I transform complex challenges into elegant solutions that delight users and drive business growth.
+									</p>
+									<p class="text-base md:text-lg leading-relaxed"
+										 in:fade={{ delay: 400, y: 20, duration: 800 }}>
+										My approach combines technical expertise with creative innovation, ensuring every project not only meets but exceeds expectations.
+									</p>
+								</div>
+
+								<div class="mt-8">
+									<h3 class="text-lg font-semibold text-neutral-200 mb-3">Tech Stack</h3>
+									<div class="flex flex-wrap gap-2">
+										{#each [
+											{ name: 'Spring', icon: 'spring' },
+											{ name: 'Java', icon: 'java' },
+											{ name: 'ASP.NET', icon: 'dotnetcore' },
+											{ name: 'C#', icon: 'csharp' },
+											{ name: 'Unity', icon: 'unity' },
+											{ name: 'HTML', icon: 'html5' },
+											{ name: 'CSS', icon: 'css3' },
+											{ name: 'JavaScript', icon: 'javascript' },
+											{ name: 'Svelte', icon: 'svelte' },
+											{ name: 'React', icon: 'react' },
+											{ name: 'PostgreSQL', icon: 'postgresql' },
+											{ name: 'MongoDB', icon: 'mongodb' },
+											{ name: 'Redis', icon: 'redis' }
+										] as tech, i}
+											<div
+												class="px-3 py-1.5 glass rounded-full text-sm text-neutral-200 border border-neutral-700/50 hover:border-emerald-500/50 transition-all cursor-default transform hover:scale-110 hover:text-emerald-400 flex items-center gap-2"
+												in:fly|global={{ delay: 100 + (i * 100), x: 20, duration: 600 }}
+											>
+												<i class="devicon-{tech.icon}-plain colored text-xl"></i>
+												{tech.name}
 											</div>
-											<div>
-												<h4 class="text-base md:text-lg font-medium text-neutral-200 transition-colors">{stat.title}</h4>
-												<p class="text-sm md:text-base text-neutral-400">{stat.desc}</p>
-											</div>
-										</div>
-									{/each}
+										{/each}
+									</div>
 								</div>
 							</div>
 
-							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform mb-6">
-								<div class="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-purple-500/10 opacity-100 transition-opacity duration-500"></div>
-								<h3 class="text-2xl font-bold text-neutral-50 mb-6 transition-colors">Recognition</h3>
-								<div class="flex flex-wrap gap-6">
+							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform lg:w-1/2">
+								<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-transparent"></div>
+								<h3 class="text-2xl font-bold text-neutral-50 mb-6 transition-colors">Key Achievements</h3>
+								<div class="grid grid-cols-2 gap-6">
 									{#each [
-										{ icon: '🏆', title: 'Best Web App 2023', desc: 'Tech Innovation Awards' },
-										{ icon: '🌟', title: 'Top Developer', desc: 'GitHub Elite' },
-										{ icon: '📈', title: 'Innovation Lead', desc: 'Industry Recognition' },
-										{ icon: '🚀', title: 'Performance Guru', desc: 'Web Performance' },
-										{ icon: '🎯', title: 'Best Practice', desc: 'Code Quality' },
-										{ icon: '💡', title: 'Tech Innovator', desc: 'Annual Summit' }
-									] as award, i}
+										{ title: 'Projects', value: '30+', icon: '💻' },
+										{ title: 'Code Quality', value: 'Kissable', icon: '🫦' },
+										{ title: 'Hackathons', value: '8', icon: '🏆' },
+										{ title: 'GitHub Stars', value: '120+', icon: '⭐' }
+									] as stat, i}
 										<div
-											class="flex flex-col items-center text-center group/award space-y-2 w-[calc(50%-12px)] md:w-[calc(33.333%-16px)]"
-											in:fly={{ delay: 400 + (i * 200), y: 20, duration: 800 }}
+											class="flex flex-col items-center text-center group/stat space-y-2 p-4 border border-neutral-800 rounded-xl transition-all hover:border-neutral-700"
+											in:fly|global={{ delay: 300 + (i * 200), y: 20, duration: 800 }}
 										>
-                    <span class="text-3xl transform group-hover/award:scale-125 transition-transform duration-500">
-                      {award.icon}
+                    <span class="text-3xl mb-2 opacity-80 group-hover/stat:opacity-100 transition-opacity duration-300">
+                      {stat.icon}
                     </span>
-											<span class="text-sm md:text-base font-medium text-neutral-200">{award.title}</span>
-											<span class="text-xs md:text-sm text-neutral-400">{award.desc}</span>
+											<span class="text-xl font-bold text-neutral-100 group-hover/stat:text-white transition-colors duration-300">{stat.value}</span>
+											<span class="text-sm text-neutral-400 group-hover/stat:text-neutral-200 transition-colors duration-300">{stat.title}</span>
 										</div>
 									{/each}
 								</div>
@@ -591,34 +595,9 @@
 						</div>
 					</div>
 				</div>
-			</div>
-
-			<div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center animate-bounce">
-				<svg
-					class="w-6 h-6 mx-auto"
-					viewBox="0 0 24 24"
-					fill="none"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						d="M12 4L12 20M12 20L18 14M12 20L6 14"
-						stroke="url(#scrollArrowGradient)"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					/>
-					<defs>
-						<linearGradient id="scrollArrowGradient" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
-							<stop offset="0%" stop-color="#10B981"/>
-							<stop offset="100%" stop-color="#14B8A6"/>
-						</linearGradient>
-					</defs>
-				</svg>
-			</div>
-		{/if}
+			{/if}
+		</div>
 	</section>
-
-
 
 	<section id="skills" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden">
 		{#if currentSection === 'skills'}
@@ -649,41 +628,125 @@
 		{/if}
 	</section>
 
-	<section id="projects" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden">
+	<section id="projects" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative overflow-y-auto">
 		{#if currentSection === 'projects'}
-			<div class="max-w-6xl w-full px-4 overflow-auto" transition:fade={{duration: 800}}>
-				<h2 class="text-4xl md:text-5xl font-bold text-neutral-50 mb-12 text-center">Featured Projects</h2>
-				<div class="flex flex-wrap gap-8 justify-center">
-					{#each projects as project, i}
-						<div class="glass rounded-2xl overflow-hidden group flex-1 min-w-[280px]" transition:smoothScale={{delay: i * 100}}>
-							<div class="relative aspect-video overflow-hidden">
-								<div class="absolute inset-0 bg-gradient-to-br {project.color} transition-opacity"></div>
-								<img src={project.image} alt={project.title} class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700" />
-								<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-									<button class="magnetic-button px-6 py-2 rounded-full glass text-white font-medium hover:bg-white/10 transition-all" on:mousemove={handleButtonHover} on:mouseleave={handleButtonLeave}>
-										View Details
-									</button>
-								</div>
-							</div>
-							<div class="p-8">
-								<h3 class="text-2xl font-bold text-neutral-50 mb-4">{project.title}</h3>
-								<p class="text-neutral-300 mb-6">{project.description}</p>
-								<div class="space-y-4 mb-6">
-									{#each project.features as feature}
-										<div class="flex items-center gap-2 text-neutral-300 group/feature">
-											<div class="w-1.5 h-1.5 rounded-full bg-emerald-500 group-hover/feature:scale-150 transition-transform"></div>
-											<span class="group-hover/feature:translate-x-1 transition-transform">{feature}</span>
+			<div class="w-full h-full flex flex-col md:pt-6 pb-16 px-4 md:px-8"
+					 in:fade={{duration: 800}}
+					 out:fade={{duration:100}}>
+				<div class="max-w-7xl mx-auto w-full flex flex-col h-full">
+					<div class="text-center mt-4 md:mt-0 lg:mt-4 mb-4" in:fly={{ y: 30, duration: 1000 }}>
+						<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50 md:pb-4">
+							My <span class="gradient-text">Projects</span>
+						</h2>
+					</div>
+
+					<div class="flex-grow flex flex-col justify-center">
+						<div class="w-full">
+							<Carousel.Root
+								class="w-full"
+								opts={{
+           align: "start",
+           loop: true,
+           slidesToScroll: 1
+          }}
+							>
+								<Carousel.Content class="-ml-4">
+									{#each projects as project}
+										<Carousel.Item class="pl-4 md:basis-1/2 lg:basis-1/3">
+											<div class="glass rounded-2xl overflow-hidden p-4 h-full flex flex-col">
+									<div class="relative aspect-video overflow-hidden mb-4">
+										<div class="absolute inset-0 bg-gradient-to-br {project.color} transition-opacity"></div>
+										<img
+											src={project.image}
+											alt={project.title}
+											class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
+										/>
+									</div>
+
+									<div class="flex-grow">
+										<h3 class="text-2xl font-bold text-neutral-50 mb-2">
+											{project.title}
+										</h3>
+										<p class="text-neutral-300 mb-4 text-sm line-clamp-3">
+											{project.description}
+										</p>
+
+										<div class="space-y-2 mb-4">
+											<h4 class="text-sm font-semibold text-neutral-200">Key Technologies</h4>
+											<div class="flex flex-wrap gap-2">
+												{#each project.tech as tech}
+												<span class="px-2 py-1 text-xs text-neutral-200 glass rounded-full">
+													{tech}
+												</span>
+												{/each}
+											</div>
 										</div>
-									{/each}
+									</div>
+
+									<div class="flex gap-2 mt-auto">
+										<Button variant="outline" class="w-full" href={project.githubLink}>
+											GitHub
+										</Button>
+										<Button class="w-full" href={project.liveLink}>
+											Live Demo
+										</Button>
+									</div>
 								</div>
-								<div class="flex flex-wrap gap-2">
-									{#each project.tech as tech}
-										<span class="px-3 py-1 text-sm text-neutral-200 glass rounded-full hover:bg-white/10 transition-colors cursor-default">{tech}</span>
+										</Carousel.Item>
 									{/each}
-								</div>
+								</Carousel.Content>
+								<Carousel.Previous class="hidden md:flex" />
+								<Carousel.Next class="hidden md:flex" />
+							</Carousel.Root>
+
+							<!-- Decorative scroll arrows -->
+							<div class="flex justify-center items-center gap-8 mt-8">
+								<svg
+									class="w-12 h-12 opacity-50"
+									viewBox="0 0 24 24"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M19 12H5M5 12L12 19M5 12L12 5"
+										stroke="url(#leftArrowGradient)"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+									<defs>
+										<linearGradient id="leftArrowGradient" x1="5" y1="5" x2="19" y2="19" gradientUnits="userSpaceOnUse">
+											<stop offset="0%" stop-color="#10B981"/>
+											<stop offset="100%" stop-color="#14B8A6"/>
+										</linearGradient>
+									</defs>
+								</svg>
+
+								<span class="text-neutral-400 text-sm">Swipe to explore projects</span>
+
+								<svg
+									class="w-12 h-12 opacity-50"
+									viewBox="0 0 24 24"
+									fill="none"
+									xmlns="http://www.w3.org/2000/svg"
+								>
+									<path
+										d="M5 12H19M19 12L12 5M19 12L12 19"
+										stroke="url(#rightArrowGradient)"
+										stroke-width="2"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									/>
+									<defs>
+										<linearGradient id="rightArrowGradient" x1="19" y1="5" x2="5" y2="19" gradientUnits="userSpaceOnUse">
+											<stop offset="0%" stop-color="#10B981"/>
+											<stop offset="100%" stop-color="#14B8A6"/>
+										</linearGradient>
+									</defs>
+								</svg>
 							</div>
 						</div>
-					{/each}
+					</div>
 				</div>
 			</div>
 		{/if}

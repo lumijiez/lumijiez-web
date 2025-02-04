@@ -7,6 +7,12 @@ node_modules
 .wrangler
 /.svelte-kit
 /build
+./idea
+/.idea
+.idea
+./.idea/*
+/.idea/*
+.idea/*
 
 # OS
 .DS_Store
