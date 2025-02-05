@@ -5,6 +5,7 @@
 	import { spring } from 'svelte/motion';
 	import ArrowNoSwipe from '../components/ArrowNoSwipe.svelte';
 	import ArrowSwipe from '../components/ArrowSwipe.svelte';
+	import { projects, sections } from '$lib/data';
 	import 'devicon/devicon.min.css';
 	import * as Carousel from "$lib/shad/ui/carousel";
 	import { Button } from "$lib/shad/ui/button";
@@ -13,82 +14,11 @@
 	let currentIndex = 0;
 	let isScrolling = false;
 	let animationRunning = false;
-	let mousePos = spring({ x: 0, y: 0 }, {
-		stiffness: 0.1,
-		damping: 0.4
-	});
-	let windowWidth;
+	let mousePos = spring({ x: 0, y: 0 }, { stiffness: 0.1, damping: 0.4 });
 	let isMobileMenuOpen = false;
-	let canvas;
-	let ctx;
+	let canvas, ctx, windowWidth;
 	let particles = [];
 	let frame = 0;
-
-	const sections = ['hero', 'about', 'skills', 'projects', 'contact'];
-
-	const skills = {
-		Frontend: [
-			{ name: 'React/Next.js', level: 95 },
-			{ name: 'Svelte/SvelteKit', level: 90 },
-			{ name: 'TypeScript', level: 88 },
-			{ name: 'Three.js/WebGL', level: 85 }
-		],
-		Backend: [
-			{ name: 'Node.js', level: 92 },
-			{ name: 'Python', level: 88 },
-			{ name: 'PostgreSQL', level: 85 },
-			{ name: 'GraphQL', level: 82 }
-		],
-		DevOps: [
-			{ name: 'Docker', level: 90 },
-			{ name: 'AWS', level: 85 },
-			{ name: 'CI/CD', level: 88 },
-			{ name: 'Kubernetes', level: 80 }
-		]
-	};
-
-	const projects = [
-		{
-			title: 'Project Alpha',
-			description: 'An immersive 3D visualization platform that transforms data into interactive landscapes',
-			tech: ['React', 'Three.js', 'GSAP'],
-			color: 'from-emerald-600/90 to-teal-500/90',
-			features: ['Real-time 3D rendering', 'Data-driven animations', 'WebGL shaders'],
-			image: '/api/placeholder/600/400',
-			githubLink: '#',
-			liveLink: '#'
-		},
-		{
-			title: 'Project Beta',
-			description: 'AI-powered content management system with real-time collaboration',
-			tech: ['Svelte', 'WebGL', 'Firebase'],
-			color: 'from-violet-600/90 to-indigo-500/90',
-			features: ['Real-time editing', 'AI suggestions', 'Version control'],
-			image: '/api/placeholder/600/400',
-			githubLink: '#',
-			liveLink: '#'
-		},
-		{
-			title: 'Project Gamma',
-			description: 'Next-generation e-commerce platform with AR product visualization',
-			tech: ['Next.js', 'TailwindCSS', 'Prisma'],
-			color: 'from-rose-600/90 to-pink-500/90',
-			features: ['AR preview', 'Instant search', 'Dynamic pricing'],
-			image: '/api/placeholder/600/400',
-			githubLink: '#',
-			liveLink: '#'
-		},
-		{
-			title: 'Project Delta',
-			description: 'Blockchain-powered decentralized marketplace',
-			tech: ['Solidity', 'Web3.js', 'React'],
-			color: 'from-blue-600/90 to-purple-500/90',
-			features: ['Smart contract integration', 'Secure transactions', 'Decentralized'],
-			image: '/api/placeholder/600/400',
-			githubLink: '#',
-			liveLink: '#'
-		}
-	];
 
 	const smoothScale = (node, { delay = 0, duration = 400 }) => {
 		return {
@@ -237,7 +167,6 @@
 					break;
 				}
 			}
-
 			target = target.parentElement;
 		}
 
@@ -351,6 +280,11 @@
 <svelte:window bind:innerWidth={windowWidth} />
 
 <style>
+    :root {
+        scrollbar-width: thin;
+        scrollbar-color: #10b981 rgba(20, 20, 20, 0.8);
+    }
+
     :global(html) {
         scroll-snap-type: y mandatory;
         overflow-y: scroll;
@@ -392,12 +326,34 @@
         100% { background-position: 0 50%; }
     }
 
-    .skill-bar {
-        transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
     .magnetic-button {
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *,
+    *:before,
+    *:after {
+        scrollbar-width: thin;
+        scrollbar-color: #10b981 rgba(20, 20, 20, 0.8);
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: rgba(20, 20, 20, 0.8);
+        backdrop-filter: blur(12px);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #10b981, #0ea5e9);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(to bottom, #059669, #0284c7);
     }
 </style>
 
@@ -516,80 +472,92 @@
 						 in:fade={{duration: 800}}
 						 out:fade={{duration:100}}>
 					<div class="max-w-7xl mx-auto w-full">
-						<div class="text-center mt-4 md:mt-0 lg:mt-4 mb-4" in:fly={{ y: 30, duration: 1000 }}>
+						<div class="text-center mt-4 md:mt-0 lg:mt-4 mb-6" in:fly={{ y: 30, duration: 1000 }}>
 							<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50 md:pb-4">
 								About <span class="gradient-text">Me</span>
 							</h2>
 						</div>
 
-						<div class="flex flex-col mb-6 lg:flex-row gap-6 lg:gap-8">
-							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform lg:w-1/2">
-								<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-transparent"></div>
-								<h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-50 mb-6">
-									<span class="gradient-text">Crafting</span> Digital Excellence
-								</h2>
-								<div class="space-y-4 text-neutral-300">
-									<p class="text-base md:text-lg leading-relaxed"
-										 in:fade={{ delay: 200, y: 20, duration: 800 }}>
-										With over 5 years of experience in full-stack development, I transform complex challenges into elegant solutions that delight users and drive business growth.
-									</p>
-									<p class="text-base md:text-lg leading-relaxed"
-										 in:fade={{ delay: 400, y: 20, duration: 800 }}>
-										My approach combines technical expertise with creative innovation, ensuring every project not only meets but exceeds expectations.
-									</p>
-								</div>
+						<div class="grid md:grid-cols-2 gap-8">
+							<div class="relative md:h-full" in:fly|global={{ x: -50, duration: 800, delay: 200 }}>
+								<div class="absolute -inset-2 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-3xl blur-2xl opacity-50"></div>
+								<div class="overflow-hidden relative z-10 glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-emerald-500/30 h-full flex flex-col">
+									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-transparent"></div>
 
-								<div class="mt-8">
-									<h3 class="text-lg font-semibold text-neutral-200 mb-3">Tech Stack</h3>
-									<div class="flex flex-wrap gap-2">
+									<h3 class="text-3xl font-bold mb-6 text-neutral-50" in:fly|global={{ y: 20, duration: 600, delay: 400 }}>
+										<span class="gradient-text">Crafting</span> Digital Excellence
+									</h3>
+
+									<div class="space-y-4 text-neutral-300 flex-grow flex flex-col justify-center">
 										{#each [
-											{ name: 'Spring', icon: 'spring' },
-											{ name: 'Java', icon: 'java' },
-											{ name: 'ASP.NET', icon: 'dotnetcore' },
-											{ name: 'C#', icon: 'csharp' },
-											{ name: 'Unity', icon: 'unity' },
-											{ name: 'HTML', icon: 'html5' },
-											{ name: 'CSS', icon: 'css3' },
-											{ name: 'JavaScript', icon: 'javascript' },
-											{ name: 'Svelte', icon: 'svelte' },
-											{ name: 'React', icon: 'react' },
-											{ name: 'PostgreSQL', icon: 'postgresql' },
-											{ name: 'MongoDB', icon: 'mongodb' },
-											{ name: 'Redis', icon: 'redis' }
-										] as tech, i}
-											<div
-												class="px-3 py-1.5 glass rounded-full text-sm text-neutral-200 border border-neutral-700/50 hover:border-emerald-500/50 transition-all cursor-default transform hover:scale-110 hover:text-emerald-400 flex items-center gap-2"
-												in:fly|global={{ delay: 100 + (i * 100), x: 20, duration: 600 }}
-											>
-												<i class="devicon-{tech.icon}-plain colored text-xl"></i>
-												{tech.name}
-											</div>
+											"I'm passionate about coding and creating meaningful digital experiences. As a student, I'm constantly learning and experimenting with different technologies to bring creative ideas to life.",
+											"Every project is a new learning opportunity for me. I love diving deep into technical challenges, finding innovative solutions, and seeing my skills grow with each line of code I write.",
+											"While I'm still early in my journey, I put my heart into every project - from the initial concept to the final deployment. I believe in writing clean code and creating applications that are both functional and user-friendly."
+										] as paragraph, i}
+											<p class="leading-relaxed text-base md:text-lg"
+												 in:fly|global={{ y: 20, duration: 600, delay: 600 + (i * 200) }}>
+												{paragraph}
+											</p>
 										{/each}
 									</div>
 								</div>
 							</div>
 
-							<div class="glass p-6 md:p-8 rounded-2xl relative overflow-hidden transform transition-transform lg:w-1/2">
-								<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-transparent"></div>
-								<h3 class="text-2xl font-bold text-neutral-50 mb-6 transition-colors">Key Achievements</h3>
-								<div class="grid grid-cols-2 gap-6">
-									{#each [
-										{ title: 'Projects', value: '30+', icon: '💻' },
-										{ title: 'Code Quality', value: 'Kissable', icon: '🫦' },
-										{ title: 'Hackathons', value: '8', icon: '🏆' },
-										{ title: 'GitHub Stars', value: '120+', icon: '⭐' }
-									] as stat, i}
-										<div
-											class="flex flex-col items-center text-center group/stat space-y-2 p-4 border border-neutral-800 rounded-xl transition-all hover:border-neutral-700"
-											in:fly|global={{ delay: 300 + (i * 200), y: 20, duration: 800 }}
-										>
-                    <span class="text-3xl mb-2 opacity-80 group-hover/stat:opacity-100 transition-opacity duration-300">
-                      {stat.icon}
-                    </span>
-											<span class="text-xl font-bold text-neutral-100 group-hover/stat:text-white transition-colors duration-300">{stat.value}</span>
-											<span class="text-sm text-neutral-400 group-hover/stat:text-neutral-200 transition-colors duration-300">{stat.title}</span>
+							<div class="flex flex-col justify-between space-y-8 md:h-full">
+								<div class="overflow-hidden glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-violet-500/30 relative flex-1"
+										 in:fly|global={{ x: 50, duration: 800, delay: 400 }}>
+									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-transparent"></div>
+									<h3 class="text-2xl font-bold text-neutral-50 mb-6"
+											in:fly|global={{ y: 20, duration: 600, delay: 600 }}>
+										Tech Constellation
+									</h3>
+									<div class="flex flex-wrap gap-3">
+										{#each [
+											{ name: 'Spring', icon: 'spring', color: 'text-green-500' },
+											{ name: 'Java', icon: 'java', color: 'text-red-500' },
+											{ name: 'C#', icon: 'csharp', color: 'text-purple-500' },
+											{ name: 'Unity', icon: 'unity', color: 'text-black' },
+											{ name: 'Svelte', icon: 'svelte', color: 'text-orange-500' },
+											{ name: 'React', icon: 'react', color: 'text-blue-400' }
+										] as tech, i}
+											<div class="group relative"
+													 in:fly|global={{ y: 20, x: 20, duration: 600, delay: 800 + (i * 100) }}>
+												<i class="devicon-{tech.icon}-plain colored text-4xl transition-all duration-300 group-hover:scale-125 group-hover:rotate-6 {tech.color}"></i>
+												<span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 text-xs text-neutral-300 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                                                {tech.name}
+                                            </span>
+											</div>
+										{/each}
+									</div>
+								</div>
+
+								<div class="flex flex-col flex-1">
+									<div class="glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-pink-500/30 relative overflow-hidden h-full"
+											 in:fly|global={{ x: 50, duration: 800, delay: 600 }}>
+										<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-rose-500 to-transparent"></div>
+										<h3 class="text-2xl font-bold text-neutral-50 mb-6"
+												in:fly|global={{ y: 20, duration: 600, delay: 800 }}>
+											Impact Metrics
+										</h3>
+										<div class="grid grid-cols-2 gap-4">
+											{#each [
+												{ title: 'Projects', value: '30+', icon: '💻', gradient: 'from-emerald-400/10 to-teal-400/10' },
+												{ title: 'Code Quality', value: 'Pristine', icon: '🔬', gradient: 'from-violet-400/10 to-purple-400/10' },
+												{ title: 'Hackathons', value: '8', icon: '🎪', gradient: 'from-pink-400/10 to-rose-400/10' },
+												{ title: 'GitHub Stars', value: '120+', icon: '⭐', gradient: 'from-blue-400/10 to-indigo-400/10' }
+											] as stat, i}
+												<div class="relative overflow-hidden backdrop-blur-xl border border-white/10 bg-gradient-to-br {stat.gradient} p-4 rounded-xl text-center transform transition-all duration-500 hover:scale-110 hover:shadow-lg group"
+														 in:fly|global={{ y: 20, duration: 600, delay: 1000 + (i * 200) }}>
+													<div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+													<div class="relative z-10">
+														<div class="text-3xl mb-2 opacity-80 transform transition-transform duration-300 hover:scale-125">{stat.icon}</div>
+														<div class="text-xl font-bold text-white/90">{stat.value}</div>
+														<div class="text-sm text-white/70">{stat.title}</div>
+													</div>
+												</div>
+											{/each}
 										</div>
-									{/each}
+									</div>
 								</div>
 							</div>
 						</div>
@@ -597,35 +565,6 @@
 				</div>
 			{/if}
 		</div>
-	</section>
-
-	<section id="skills" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden">
-		{#if currentSection === 'skills'}
-			<div class="max-w-6xl w-full px-4 overflow-auto" transition:fade={{duration: 800}}>
-				<h2 class="text-4xl md:text-5xl font-bold text-neutral-50 mb-12 text-center">Technical Expertise</h2>
-				<div class="flex flex-wrap gap-8 justify-center">
-					{#each Object.entries(skills) as [category, categorySkills], i}
-						<div class="glass p-8 rounded-2xl relative overflow-hidden flex-1 min-w-[280px]" transition:fade={{delay: i * 100}}>
-							<h3 class="text-2xl font-bold text-neutral-50 mb-8 relative">{category}</h3>
-							<div class="space-y-6 relative">
-								{#each categorySkills as skill, j}
-									<div class="space-y-2 transform hover:scale-105 transition-transform">
-										<div class="flex justify-between text-neutral-200">
-											<span class="font-medium">{skill.name}</span>
-											<span class="opacity-75">{skill.level}%</span>
-										</div>
-										<div class="h-2 bg-neutral-800 rounded-full overflow-hidden">
-											<div class="skill-bar h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 relative" style="width: {skill.level}%">
-											</div>
-										</div>
-									</div>
-								{/each}
-							</div>
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
 	</section>
 
 	<section id="projects" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative overflow-y-auto">
@@ -645,53 +584,51 @@
 							<Carousel.Root
 								class="w-full"
 								opts={{
-           align: "start",
-           loop: true,
-           slidesToScroll: 1
-          }}
+								 align: "start",
+								 loop: true,
+								 slidesToScroll: 1
+								}}
 							>
 								<Carousel.Content class="-ml-4">
 									{#each projects as project}
 										<Carousel.Item class="pl-4 md:basis-1/2 lg:basis-1/3">
 											<div class="glass rounded-2xl overflow-hidden p-4 h-full flex flex-col">
-									<div class="relative aspect-video overflow-hidden mb-4">
-										<div class="absolute inset-0 bg-gradient-to-br {project.color} transition-opacity"></div>
-										<img
-											src={project.image}
-											alt={project.title}
-											class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700"
-										/>
-									</div>
+												<div class="relative aspect-video overflow-hidden mb-4">
+													<div class="absolute inset-0 bg-gradient-to-br transition-opacity"></div>
+														<img
+															src={project.image}
+															alt={project.title}
+															loading="lazy"
+															class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700 max-h-[500px]"
+														/>
+													</div>
 
-									<div class="flex-grow">
-										<h3 class="text-2xl font-bold text-neutral-50 mb-2">
-											{project.title}
-										</h3>
-										<p class="text-neutral-300 mb-4 text-sm line-clamp-3">
-											{project.description}
-										</p>
+												<div class="flex-grow">
+													<h3 class="text-2xl font-bold text-neutral-50 mb-2">
+														{project.title}
+													</h3>
+													<p class="text-neutral-300 mb-4 text-sm line-clamp-3">
+														{project.description}
+													</p>
 
-										<div class="space-y-2 mb-4">
-											<h4 class="text-sm font-semibold text-neutral-200">Key Technologies</h4>
-											<div class="flex flex-wrap gap-2">
-												{#each project.tech as tech}
-												<span class="px-2 py-1 text-xs text-neutral-200 glass rounded-full">
-													{tech}
-												</span>
-												{/each}
+													<div class="space-y-2 mb-4">
+														<h4 class="text-sm font-semibold text-neutral-200">Key Technologies</h4>
+														<div class="flex flex-wrap gap-2">
+															{#each project.tech as tech}
+															<span class="px-2 py-1 text-xs text-neutral-200 glass rounded-full">
+																{tech}
+															</span>
+															{/each}
+														</div>
+													</div>
+												</div>
+
+												<div class="flex gap-2 mt-auto">
+													<Button variant="outline" class="w-full" href={project.githubLink}>
+														GitHub
+													</Button>
+												</div>
 											</div>
-										</div>
-									</div>
-
-									<div class="flex gap-2 mt-auto">
-										<Button variant="outline" class="w-full" href={project.githubLink}>
-											GitHub
-										</Button>
-										<Button class="w-full" href={project.liveLink}>
-											Live Demo
-										</Button>
-									</div>
-								</div>
 										</Carousel.Item>
 									{/each}
 								</Carousel.Content>
@@ -699,7 +636,6 @@
 								<Carousel.Next class="hidden md:flex" />
 							</Carousel.Root>
 
-							<!-- Decorative scroll arrows -->
 							<div class="flex justify-center items-center gap-8 mt-8">
 								<svg
 									class="w-12 h-12 opacity-50"
@@ -752,49 +688,93 @@
 		{/if}
 	</section>
 
-	<section id="contact" class="h-screen flex items-center justify-center bg-[#0a0a0a] relative overflow-hidden">
+	<section id="contact" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative overflow-y-auto">
 		{#if currentSection === 'contact'}
-			<div class="max-w-4xl w-full px-4 overflow-auto" transition:fade={{duration: 800}}>
-				<div class="glass p-8 md:p-10 rounded-2xl relative">
-					<h2 class="text-4xl font-bold text-neutral-50 mb-8 text-center">Let's Connect</h2>
-					<div class="flex flex-wrap gap-8 mb-8 justify-center">
-						{#each [
-							{ title: 'Email', value: 'hello@example.com', icon: '✉️' },
-							{ title: 'Location', value: 'San Francisco, CA', icon: '📍' },
-							{ title: 'GitHub', value: '@username', icon: '💻' },
-							{ title: 'LinkedIn', value: '@username', icon: '🔗' }
-						] as contact, i}
-							<div class="glass p-6 rounded-xl group relative overflow-hidden flex-1 min-w-[200px]" transition:scale={{delay: i * 100}}>
-								<div class="flex items-center gap-3">
-									<span class="text-2xl transform group-hover:scale-125 transition-transform">{contact.icon}</span>
-									<div>
-										<h3 class="text-lg font-medium text-neutral-200 mb-1">{contact.title}</h3>
-										<p class="text-neutral-400 group-hover:text-neutral-200 transition-colors">{contact.value}</p>
+			<div class="w-full h-full flex flex-col md:pt-6 pb-16 px-4 md:px-8"
+					 in:fade={{duration: 800}}
+					 out:fade={{duration:100}}>
+				<div class="max-w-7xl mx-auto w-full flex flex-col h-full">
+					<div class="text-center mt-4 md:mt-0 lg:mt-4 mb-6" in:fly={{ y: 30, duration: 1000 }}>
+						<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-50 md:pb-6 sm:pb-6">
+							Let's <span class="gradient-text">Connect</span>
+						</h2>
+					</div>
+
+					<div class="flex-grow flex flex-col justify-center">
+						<div class="grid md:grid-cols-2 gap-8 mb-6">
+
+							<div class="flex flex-col justify-between space-y-8" in:fly|global={{ x: 50, duration: 800, delay: 400 }}>
+								<div class="overflow-hidden glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-violet-500/30 relative flex-1">
+									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-transparent"></div>
+									<h3 class="text-2xl font-bold text-neutral-50 mb-6">
+										Social Channels
+									</h3>
+									<div class="grid grid-cols-2 gap-4">
+										<a href="https://github.com/lumijiez" target="_blank"
+											 class="group relative p-4 text-center glass rounded-xl hover:border-emerald-500/30 border border-transparent transition-all duration-300"
+											 in:fly|global={{ y: 20, x: 20, duration: 600, delay: 800 }}>
+											<i class="devicon-github-plain text-4xl text-white transition-all duration-300 group-hover:scale-125 group-hover:rotate-6"></i>
+											<span class="block mt-2 text-neutral-300 group-hover:text-white transition-colors">
+												GitHub
+											</span>
+										</a>
+
+										<a href="https://www.linkedin.com/in/lumijiez/" target="_blank"
+											 class="group relative p-4 text-center glass rounded-xl hover:border-emerald-500/30 border border-transparent transition-all duration-300"
+											 in:fly|global={{ y: 20, x: 20, duration: 600, delay: 900 }}>
+											<i class="devicon-linkedin-plain text-4xl text-blue-500 transition-all duration-300 group-hover:scale-125 group-hover:rotate-6"></i>
+											<span class="block mt-2 text-neutral-300 group-hover:text-white transition-colors">
+												LinkedIn
+											</span>
+										</a>
+
+										<a href="https://instagram.com/lumijiez" target="_blank"
+											 class="group relative p-4 text-center glass rounded-xl hover:border-emerald-500/30 border border-transparent transition-all duration-300"
+											 in:fly|global={{ y: 20, x: 20, duration: 600, delay: 1000 }}>
+											<img src="/insta.png" alt="Instagram" class="w-10 h-10 mx-auto text-4xl transition-all duration-300 group-hover:scale-125 group-hover:rotate-6"/>
+											<span class="block mt-2 text-neutral-300 group-hover:text-white transition-colors">
+												Instagram
+											</span>
+										</a>
+
+										<a href="/cv.pdf" target="_blank"
+											 class="group relative p-4 text-center glass rounded-xl hover:border-emerald-500/30 border border-transparent transition-all duration-300"
+											 in:fly|global={{ y: 20, x: 20, duration: 600, delay: 1100 }}>
+												<span class="text-4xl transition-all duration-300 group-hover:scale-125 group-hover:rotate-6">
+													📄
+												</span>
+												<span class="block mt-2 text-neutral-300 group-hover:text-white transition-colors">
+													Download CV
+												</span>
+										</a>
 									</div>
 								</div>
 							</div>
-						{/each}
+
+							<div class="glass rounded-3xl p-8 border border-neutral-800/50 relative overflow-hidden group" in:fly|global={{ x: 50, duration: 800, delay: 400 }}>
+								<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 to-transparent"></div>
+								<div class="absolute inset-0 bg-gradient-to-br from-pink-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+								<div class="relative z-10">
+									<h3 class="text-2xl font-bold text-neutral-50 mb-4">Quick Info</h3>
+									<div class="space-y-4">
+										<div>
+											<p class="text-neutral-400">Location</p>
+											<p class="text-neutral-100">Chisinau, Moldova</p>
+										</div>
+										<div>
+											<p class="text-neutral-400">Email</p>
+											<p class="text-neutral-100">daniil.schipschi@isa.utm.com</p>
+										</div>
+										<div>
+											<p class="text-neutral-400">Availability</p>
+											<p class="text-emerald-400">Open to Work/Internships</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-					<form class="space-y-6">
-						<div class="flex flex-wrap gap-6">
-							<div class="space-y-2 group flex-1 min-w-[200px]">
-								<label class="text-neutral-300 text-sm" for="name">Name</label>
-								<input type="text" id="name" class="w-full px-4 py-3 rounded-xl bg-neutral-800/50 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all" placeholder="Your name" />
-							</div>
-							<div class="space-y-2 group flex-1 min-w-[200px]">
-								<label class="text-neutral-300 text-sm" for="email">Email</label>
-								<input type="email" id="email" class="w-full px-4 py-3 rounded-xl bg-neutral-800/50 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all" placeholder="your@email.com" />
-							</div>
-						</div>
-						<div class="space-y-2 group">
-							<label class="text-neutral-300 text-sm" for="message">Message</label>
-							<textarea id="message" rows="4" class="w-full px-4 py-3 rounded-xl bg-neutral-800/50 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all resize-none" placeholder="Your message..."></textarea>
-						</div>
-						<button type="submit" class="magnetic-button w-full py-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium transition-all relative overflow-hidden group" on:mousemove={handleButtonHover} on:mouseleave={handleButtonLeave}>
-							<span class="relative z-10">Send Message</span>
-							<div class="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
-						</button>
-					</form>
 				</div>
 			</div>
 		{/if}
