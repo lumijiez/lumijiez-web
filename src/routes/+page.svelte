@@ -417,7 +417,7 @@
 			{/if}
 			<div class="flex flex-col justify-center text-center z-10 px-4" in:smoothScale={{duration: 1000}} out:smoothScale={{duration: 100}}>
 				<div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12 mb-8">
-					<div class="pt-8 relative group perspective-1000" style="transform: perspective(1000px) rotateY({$mousePos.x / 500}deg) rotateX({-$mousePos.y / 50}deg)">
+					<div class="relative group perspective-1000" style="transform: perspective(1000px) rotateY({$mousePos.x / 500}deg) rotateX({-$mousePos.y / 50}deg)">
 						<div class="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-emerald-500/50 transition-all duration-500 group-hover:scale-105 group-hover:border-emerald-500">
 							<img
 								src="/profile.jpg"
@@ -462,7 +462,7 @@
 					</div>
 				</div>
 
-				<div class="mt-12 flex flex-wrap justify-center gap-4">
+				<div class="flex flex-wrap justify-center gap-4">
 					<button
 						class="magnetic-button px-8 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium transition-all relative overflow-hidden group"
 						on:mousemove={handleButtonHover}
