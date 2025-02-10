@@ -435,9 +435,9 @@
 						</h1>
 						<div class="mb-4">
 							{#each [
-								{ text: 'Design.', special: false },
-								{ text: 'Create.', special: false },
-								{ text: 'Innovate.', special: true }
+								{ text: 'Designing.', special: false },
+								{ text: 'Creating.', special: false },
+								{ text: 'Innovating.', special: true }
 							] as word, i}
 							<span
 								in:fly|global={{ y: 50, duration: 800, delay: i * 300 }}
@@ -449,7 +449,7 @@
 							{/each}
 						</div>
 						<p class="text-xl md:text-2xl text-neutral-300 max-w-2xl mx-auto md:mx-0 leading-relaxed">
-							{#each ['Designing', 'and', 'developing', 'things', 'that', 'actually', 'work'] as word, i}
+							{#each ['Developing', 'things', 'that', 'actually', 'work'] as word, i}
 							<span
 								in:fade|global={{ duration: 200, delay: i * 100 }}
 								out:fade|global={{ duration: 100 }}
