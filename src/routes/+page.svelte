@@ -416,35 +416,58 @@
 				<ArrowSwipe />
 			{/if}
 			<div class="flex flex-col justify-center text-center z-10 px-4" in:smoothScale={{duration: 1000}} out:smoothScale={{duration: 100}}>
-				<div class="mb-8 relative inline-block perspective-1000" style="transform: perspective(1000px) rotateY({$mousePos.x / 500}deg) rotateX({-$mousePos.y / 50}deg)">
-					<h1 class="text-5xl md:text-8xl font-bold text-neutral-50 mb-6 tracking-tight">
-						{#each ['Design.', 'Create.', 'Innovate.'] as word, i}
+				<div class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12 mb-8">
+					<div class="pt-8 relative group perspective-1000" style="transform: perspective(1000px) rotateY({$mousePos.x / 500}deg) rotateX({-$mousePos.y / 50}deg)">
+						<div class="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden border-4 border-emerald-500/50 transition-all duration-500 group-hover:scale-105 group-hover:border-emerald-500">
+							<img
+								src="/profile.jpg"
+								alt="Daniel Schipschi"
+								class="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-500"
+							/>
+						</div>
+						<div class="absolute -inset-2 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-full blur-2xl opacity-50 -z-10"></div>
+					</div>
+
+					<div class="text-center md:text-left">
+						<h1 class="text-5xl md:text-6xl font-bold text-neutral-50 mb-4 tracking-tight">
+							<span>Hi, I'm </span>
+							<span class="gradient-text">Daniel</span>
+						</h1>
+						<div class="mb-4">
+							{#each [
+								{ text: 'Design.', special: false },
+								{ text: 'Create.', special: false },
+								{ text: 'Innovate.', special: true }
+							] as word, i}
 							<span
 								in:fly|global={{ y: 50, duration: 800, delay: i * 300 }}
 								out:fade|global={{ duration: 100 }}
-								class="inline-block mr-4 {word === 'Innovate.' ? 'gradient-text' : ''}"
+								class="inline-block mr-4 text-3xl md:text-4xl {word.special ? 'gradient-text font-bold' : 'text-white font-bold'}"
 							>
-									{word}
+								{word.text}
 							</span>
-						{/each}
-					</h1>
+							{/each}
+						</div>
+						<p class="text-xl md:text-2xl text-neutral-300 max-w-2xl mx-auto md:mx-0 leading-relaxed">
+							{#each ['Designing', 'and', 'developing', 'things', 'that', 'actually', 'work'] as word, i}
+							<span
+								in:fade|global={{ duration: 200, delay: i * 100 }}
+								out:fade|global={{ duration: 100 }}
+								class="inline-block mr-1"
+							>
+								{word}
+							</span>
+							{/each}
+						</p>
+					</div>
 				</div>
-				<p class="text-xl md:text-2xl text-neutral-300 max-w-2xl mx-auto leading-relaxed">
-					{#each ['Designing', 'and', 'developing', 'things', 'that', 'actually', 'work'] as word, i}
-                    <span
-											in:fade|global={{ duration: 200, delay: i * 100 }}
-											out:fade|global={{ duration: 100 }}
-											class="inline-block mr-1"
-										>
-                        {word}
-                    </span>
-					{/each}
-				</p>
+
 				<div class="mt-12 flex flex-wrap justify-center gap-4">
 					<button
 						class="magnetic-button px-8 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium transition-all relative overflow-hidden group"
 						on:mousemove={handleButtonHover}
 						on:mouseleave={handleButtonLeave}
+						on:click={() => scrollToSection('projects')}
 					>
 						<span class="relative z-10">View Projects</span>
 						<div class="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
@@ -453,6 +476,7 @@
 						class="magnetic-button px-8 py-3 rounded-full glass text-white font-medium transition-all relative overflow-hidden group"
 						on:mousemove={handleButtonHover}
 						on:mouseleave={handleButtonLeave}
+						on:click={() => scrollToSection('contact')}
 					>
 						<span class="relative z-10">Contact Me</span>
 						<div class="absolute inset-0 bg-white/10 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
@@ -464,6 +488,7 @@
 			<ArrowNoSwipe />
 		{/if}
 	</section>
+
 
 	<section id="about" class="h-screen flex items-start justify-center bg-[#0a0a0a] relative">
 		<div class="w-full h-full flex items-start md:pt-6 px-4 md:px-8 overflow-y-scroll">
@@ -481,7 +506,7 @@
 						<div class="grid md:grid-cols-2 gap-8">
 							<div class="relative md:h-full" in:fly|global={{ x: -50, duration: 800, delay: 200 }}>
 								<div class="absolute -inset-2 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-3xl blur-2xl opacity-50"></div>
-								<div class="overflow-hidden relative z-10 glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-emerald-500/30 h-full flex flex-col">
+								<div class="overflow-hidden relative z-10 glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 h-full flex flex-col">
 									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-transparent"></div>
 
 									<h3 class="text-3xl font-bold mb-6 text-neutral-50" in:fly|global={{ y: 20, duration: 600, delay: 400 }}>
@@ -504,7 +529,7 @@
 							</div>
 
 							<div class="flex flex-col justify-between space-y-8 md:h-full">
-								<div class="overflow-hidden glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-violet-500/30 relative flex-1"
+								<div class="overflow-hidden glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 relative flex-1"
 										 in:fly|global={{ x: 50, duration: 800, delay: 400 }}>
 									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-transparent"></div>
 									<h3 class="text-2xl font-bold text-neutral-50 mb-6"
@@ -532,7 +557,7 @@
 								</div>
 
 								<div class="flex flex-col flex-1">
-									<div class="glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-pink-500/30 relative overflow-hidden h-full"
+									<div class="glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 relative overflow-hidden h-full"
 											 in:fly|global={{ x: 50, duration: 800, delay: 600 }}>
 										<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-rose-500 to-transparent"></div>
 										<h3 class="text-2xl font-bold text-neutral-50 mb-6"
@@ -546,11 +571,11 @@
 												{ title: 'Hackathons', value: '8', icon: '🎪', gradient: 'from-pink-400/10 to-rose-400/10' },
 												{ title: 'GitHub Stars', value: '120+', icon: '⭐', gradient: 'from-blue-400/10 to-indigo-400/10' }
 											] as stat, i}
-												<div class="relative overflow-hidden backdrop-blur-xl border border-white/10 bg-gradient-to-br {stat.gradient} p-4 rounded-xl text-center transform transition-all duration-500 hover:scale-110 hover:shadow-lg group"
+												<div class="relative overflow-hidden backdrop-blur-xl border border-white/10 bg-gradient-to-br {stat.gradient} p-4 rounded-xl text-center transform transition-all duration-500 group"
 														 in:fly|global={{ y: 20, duration: 600, delay: 1000 + (i * 200) }}>
-													<div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+													<div class="absolute inset-0 bg-white/5 opacity-0 transition-opacity duration-300"></div>
 													<div class="relative z-10">
-														<div class="text-3xl mb-2 opacity-80 transform transition-transform duration-300 hover:scale-125">{stat.icon}</div>
+														<div class="text-3xl mb-2 opacity-80 transform transition-transform duration-300">{stat.icon}</div>
 														<div class="text-xl font-bold text-white/90">{stat.value}</div>
 														<div class="text-sm text-white/70">{stat.title}</div>
 													</div>
@@ -704,7 +729,7 @@
 						<div class="grid md:grid-cols-2 gap-8 mb-6">
 
 							<div class="flex flex-col justify-between space-y-8" in:fly|global={{ x: 50, duration: 800, delay: 400 }}>
-								<div class="overflow-hidden glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:scale-[1.02] hover:border-violet-500/30 relative flex-1">
+								<div class="overflow-hidden glass p-8 rounded-3xl border border-neutral-800/50 transform transition-all duration-500 hover:border-violet-500/30 relative flex-1">
 									<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-500 via-purple-500 to-transparent"></div>
 									<h3 class="text-2xl font-bold text-neutral-50 mb-6">
 										Social Channels

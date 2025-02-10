@@ -30,6 +30,14 @@ export const projects = [
 		features: ['Fantastic performance', 'Design patterns', 'GL shaders'],
 		image: '/bugger.png',
 		githubLink: 'https://github.com/lumijiez/bugger'
+	},
+	{
+		title: 'Other projects',
+		description: 'Many more projects, assignments and tasks can be found on my GitHub!',
+		tech: ['Java', 'C#', 'APIs', 'etc.'],
+		features: ['Fantastic performance', 'Design patterns', 'GL shaders'],
+		image: '/etc.png',
+		githubLink: 'https://github.com/lumijiez'
 	}
 ];
 
