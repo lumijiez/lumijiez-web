@@ -422,7 +422,7 @@
 							<img
 								src="/profile.jpg"
 								alt="Daniel Schipschi"
-								class="w-full h-full object-cover object-top grayscale hover:grayscale-0 transition-all duration-500"
+								class="w-full h-full object-cover object-top transition-all duration-500"
 							/>
 						</div>
 						<div class="absolute -inset-2 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-full blur-2xl opacity-50 -z-10"></div>
