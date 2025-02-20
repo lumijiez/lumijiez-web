@@ -567,7 +567,7 @@
 										<div class="grid grid-cols-2 gap-4">
 											{#each [
 												{ title: 'Projects', value: '30+', icon: '💻', gradient: 'from-emerald-400/10 to-teal-400/10' },
-												{ title: 'Code Quality', value: 'Pristine', icon: '🔬', gradient: 'from-violet-400/10 to-purple-400/10' },
+												{ title: 'Code Quality', value: 'Attractive', icon: '🔬', gradient: 'from-violet-400/10 to-purple-400/10' },
 												{ title: 'Hackathons', value: '8', icon: '🎪', gradient: 'from-pink-400/10 to-rose-400/10' },
 												{ title: 'GitHub Stars', value: '120+', icon: '⭐', gradient: 'from-blue-400/10 to-indigo-400/10' }
 											] as stat, i}
